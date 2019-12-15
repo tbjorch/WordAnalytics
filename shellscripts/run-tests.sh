@@ -1,0 +1,1 @@
+python -m pytest -v article_service/tests/
