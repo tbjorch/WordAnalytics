@@ -1,5 +1,8 @@
+# Standard library
 from typing import Dict
-from flask import request, make_response, jsonify
+
+# 3rd party modules
+from flask import request, make_response, jsonify, Response
 import flask
 
 
@@ -26,3 +29,9 @@ def get_required_data_from_request(*required_fields: str) -> Dict:
 
 def ok_response() -> flask.Response:
     return make_response(jsonify(message="ok"), 200)
+
+
+def make_json_response(return_data: Dict) -> flask.Response:
+    response = make_response(jsonify(return_data), 200)
+    response.content_type = "application/json"
+    return response

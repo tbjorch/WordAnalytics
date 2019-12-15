@@ -4,8 +4,14 @@ from article_service.app.controller import url_controller
 
 
 @app.route('/v1/urls', methods=['GET'])
-def get_url() -> Response:
-    return "Hello from urls"
+def get_all_urls() -> Response:
+    return Response("Hello from urls", 200)
+
+
+@app.route('/v1/urls/<id>', methods=['GET'])
+def get_url(id: str) -> Response:
+    return url_controller.get_url_by_id(id)
+    # return Response("Hello from urls", 200)
 
 
 @app.route('/v1/urls', methods=['POST'])

@@ -2,16 +2,32 @@
 from datetime import datetime
 
 # 3rd party modules
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, NotFound
 
 # Internal modules
-from article_service.app.models.dto import CreateUrlDTO
-from article_service.app.repository.url_repo import insert_url
+from article_service.app.models.dto import CreateUrlDTO, UrlDTO
+from article_service.app.repository.url_repo import insert_url, get_url
 
 
 def create_url(url_dto: CreateUrlDTO) -> None:
     _assert_valid_yearmonth(url_dto.yearmonth)
     insert_url(url_dto)
+
+
+def get_url_by_id(id: str) -> UrlDTO:
+    url = get_url(id)
+    if url is None:
+        raise NotFound("No url exist with the provided id")
+    url_dto = UrlDTO(
+        url_id=url.id,
+        url=url.url,
+        yearmonth=url.yearmonth,
+        undesired_url=url.undesired_url,
+        payed_content=url.payed_content,
+        scraped_at=url.scraped_at,
+        created_at=url.created_at,
+    )
+    return url_dto
 
 
 def _assert_valid_yearmonth(yearmonth: int) -> None:

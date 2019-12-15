@@ -1,5 +1,6 @@
 # Standard library
 import json
+import os
 
 # Third party modules
 from flask import Flask
@@ -8,6 +9,7 @@ from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+# "postgresql://root:asd123@localhost:5432/articleservice"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
