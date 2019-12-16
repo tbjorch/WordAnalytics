@@ -1,6 +1,5 @@
 # Standard library
 import json
-import os
 
 # Third party modules
 from flask import Flask

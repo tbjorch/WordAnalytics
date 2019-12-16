@@ -11,7 +11,16 @@ def get_all_urls() -> Response:
 @app.route('/v1/urls/<id>', methods=['GET'])
 def get_url(id: str) -> Response:
     return url_controller.get_url_by_id(id)
-    # return Response("Hello from urls", 200)
+
+
+@app.route('/v1/urls/unscraped', methods=['GET'])
+def get_unscraped_urls() -> Response:
+    return url_controller.get_unscraped_urls()
+
+
+@app.route('/v1/urls/<id>/unscraped', methods=['PUT'])
+def update_unscraped_urls(id: str) -> Response:
+    return url_controller.set_url_to_scraped(id)
 
 
 @app.route('/v1/urls', methods=['POST'])

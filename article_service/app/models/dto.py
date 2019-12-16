@@ -55,3 +55,17 @@ class UrlDTO:
             scraped_at=self.scraped_at,
             created_at=self.created_at
         )
+
+
+@dataclass
+class SetUrlScrapedDTO:
+    url_id: str
+    scraped_at: datetime
+
+    @classmethod
+    def fromdict(cls, raw: Dict[str, Any], id: str) -> "SetUrlScrapedDTO":
+        id = id
+        time_scraped = datetime.strptime(raw["scraped_at"], '%Y-%m-%d %H:%M:%S.%f')
+        if not (isinstance(id, str) and isinstance(time_scraped, datetime)):
+            raise BadRequest("Incorrect type on incoming values")
+        return cls(url_id=id, scraped_at=time_scraped)
