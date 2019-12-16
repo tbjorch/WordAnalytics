@@ -2,7 +2,7 @@
 import flask
 
 # Internal modules
-from article_service.app.service import url_service
+from article_service.app.service import url as service
 from article_service.utils import (
     get_required_data_from_request,
     ok_response, 
@@ -23,17 +23,17 @@ def create_url() -> flask.Response:
         "undesired_url",
     )
     url_dto = CreateUrlDTO.fromdict(request_data)
-    url_service.create_url(url_dto)
+    service.create_url(url_dto)
     return ok_response()
 
 
 def get_url_by_id(id: str) -> flask.Response:
-    url_dto: UrlDTO = url_service.get_url_by_id(id)
+    url_dto: UrlDTO = service.get_url_by_id(id)
     return make_json_response(url_dto.todict())
 
 
 def get_unscraped_urls() -> flask.Response:
-    unscraped_urls = url_service.get_unscraped_urls()
+    unscraped_urls = service.get_unscraped_urls()
     return make_json_response(unscraped_urls)
 
 
@@ -42,5 +42,5 @@ def set_url_to_scraped(id: str) -> flask.Response:
     dto = SetUrlScrapedDTO.fromdict(request_data, id)
     print(type(dto.scraped_at))
     print(dto.scraped_at)
-    url_service.set_url_to_scraped(dto)
+    service.set_url_to_scraped(dto)
     return ok_response()

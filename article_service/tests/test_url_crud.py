@@ -2,9 +2,6 @@
 import json
 from datetime import datetime
 
-# 3rd party modules
-from flask import jsonify
-
 # Internal modules
 from article_service.app import app, db
 from article_service.app.models import Url

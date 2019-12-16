@@ -2,8 +2,9 @@
 from typing import Dict
 
 # 3rd party modules
-from flask import request, make_response, jsonify, Response
+from flask import request, make_response, jsonify
 import flask
+from werkzeug.exceptions import BadRequest
 
 
 def get_required_data_from_request(*required_fields: str) -> Dict:
@@ -12,16 +13,16 @@ def get_required_data_from_request(*required_fields: str) -> Dict:
     and ValueError if required field is missing or if request contains
     additional invalid fields."""
     if not request.is_json:
-        raise TypeError("Posted data is expected to be in JSON format")
+        raise BadRequest("Posted data is expected to be in JSON format")
     else:
         data = request.get_json()
         if len(data) != len(required_fields):
-            raise ValueError(
+            raise BadRequest(
                 f"Expected {len(required_fields)} fields but got {len(data)}"
                 )
         for field in required_fields:
             if field not in data:
-                raise ValueError(
+                raise BadRequest(
                     f"Required field {field} is missing in request body"
                     )
         return data

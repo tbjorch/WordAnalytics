@@ -1,4 +1,6 @@
 from article_service.app import app
+from article_service.app.controller import article as controller
+from article_service.utils import ok_response
 
 
 @app.route('/v1/articles', methods=['GET'])
@@ -8,7 +10,8 @@ def get_article():
 
 @app.route('/v1/articles', methods=['POST'])
 def post_article():
-    pass
+    controller.create_article()
+    return ok_response()
 
 
 @app.route('/v1/articles/<id>', methods=['DELETE'])

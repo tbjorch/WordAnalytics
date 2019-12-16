@@ -51,7 +51,7 @@ def get_unscraped_urls() -> []:
 
 
 def set_url_to_scraped(dto: SetUrlScrapedDTO) -> None:
-    url: Url = _assert_url_exists(dto.url_id)
+    url: Url = assert_url_exists(dto.url_id)
     url_repo.flag_url_is_scraped(url, dto.scraped_at)
 
 
@@ -70,7 +70,7 @@ def _assert_valid_yearmonth(yearmonth: int) -> None:
         raise BadRequest("Value must be in interval 1-12")
 
 
-def _assert_url_exists(id: str) -> Url:
+def assert_url_exists(id: str) -> Url:
     url: Url = url_repo.get_by_id(id)
     if url is None:
         raise NotFound("No url exist with the provided id")
