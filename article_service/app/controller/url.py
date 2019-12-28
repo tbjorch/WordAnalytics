@@ -1,3 +1,6 @@
+# Standard library
+from typing import List
+
 # 3rd party modules
 import flask
 
@@ -44,3 +47,8 @@ def set_url_to_scraped(id: str) -> flask.Response:
     print(dto.scraped_at)
     service.set_url_to_scraped(dto)
     return ok_response()
+
+
+def get_urls_by_yearmonth(yearmonth: str) -> flask.Response:
+    url_list: List[UrlDTO] = service.get_urls_by_yearmonth(yearmonth)
+    return make_json_response(url_list)

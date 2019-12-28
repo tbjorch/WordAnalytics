@@ -1,5 +1,6 @@
 # Standard library
 from datetime import datetime
+from typing import List
 
 # 3rd party modules
 from werkzeug.exceptions import BadRequest, NotFound
@@ -53,6 +54,22 @@ def get_unscraped_urls() -> []:
 def set_url_to_scraped(dto: SetUrlScrapedDTO) -> None:
     url: Url = assert_url_exists(dto.url_id)
     url_repo.flag_url_is_scraped(url, dto.scraped_at)
+
+
+def get_urls_by_yearmonth(yearmonth: str) -> List[UrlDTO]:
+    _assert_valid_yearmonth(yearmonth)
+    urls: List[Url] = url_repo.get_by_yearmonth(yearmonth)
+    if len(urls) == 0:
+        raise NotFound("No urls available at provided yearmonth")
+    return [UrlDTO(
+        url_id=url.id,
+        url=url.url,
+        yearmonth=url.yearmonth,
+        undesired_url=url.undesired_url,
+        payed_content=url.payed_content,
+        scraped_at=url.scraped_at,
+        created_at=url.created_at
+        ).todict() for url in urls]
 
 
 def _assert_valid_yearmonth(yearmonth: int) -> None:

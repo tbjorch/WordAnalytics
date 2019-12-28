@@ -1,10 +1,9 @@
 # Standard library
 import json
-from datetime import datetime
 
 # Internal modules
 from article_service.app import app, db
-from article_service.app.models import Article, Url
+from article_service.app.models import Url
 
 
 def test_post_article_correct() -> None:
@@ -125,4 +124,5 @@ def test_post_article_not_json() -> None:
         )
         assert res.status_code == 400
         data = res.get_json()
-        assert data["description"] == "Posted data is expected to be in JSON format"
+        assert data["description"] == \
+            "Posted data is expected to be in JSON format"

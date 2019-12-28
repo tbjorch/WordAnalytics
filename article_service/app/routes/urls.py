@@ -13,6 +13,11 @@ def get_url(id: str) -> Response:
     return controller.get_url_by_id(id)
 
 
+@app.route('/v1/urls/yearmonth/<yearmonth>', methods=['GET'])
+def get_url_by_yearmonth(yearmonth: str) -> Response:
+    return controller.get_urls_by_yearmonth(yearmonth)
+
+
 @app.route('/v1/urls/unscraped', methods=['GET'])
 def get_unscraped_urls() -> Response:
     return controller.get_unscraped_urls()

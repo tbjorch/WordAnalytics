@@ -35,3 +35,8 @@ def get_unscraped() -> [Url]:
 def flag_url_is_scraped(url: Url, scraped_at: datetime) -> None:
     url.scraped_at = scraped_at
     db.session.commit()
+
+
+def get_by_yearmonth(yearmonth: str) -> None:
+    urls = Url.query.filter_by(yearmonth=yearmonth).all()
+    return urls

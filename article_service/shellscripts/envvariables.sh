@@ -1,0 +1,5 @@
+export DB_URI="article_service"
+export DB_PORT="5432"
+export DB_NAME="articleservice"
+export DB_USER="root"
+export DB_PW="asd123"
