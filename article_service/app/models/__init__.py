@@ -1,5 +1,6 @@
 from article_service.app.models.Article import Article
 from article_service.app.models.Url import Url
+from article_service.app.models.MonthStats import MonthStats
 from article_service.app import db
 
 

@@ -278,7 +278,7 @@ def test_put_urls_unscraped_correct() -> None:
     db.session.add(url)
     db.session.commit()
     with app.test_client() as c:
-        assert Url.query.filter_by(id=url.id).first().scraped_at == None
+        assert Url.query.filter_by(id=url.id).first().scraped_at is None
         time_scraped = datetime.utcnow()
         res = c.put(
             '/v1/urls/abc123/unscraped',

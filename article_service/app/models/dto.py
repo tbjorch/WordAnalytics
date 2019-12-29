@@ -92,3 +92,39 @@ class CreateArticleDTO:
         ):
             raise BadRequest("Incorrect type on incoming values")
         return cls(article_id=article_id, headline=headline, body=body)
+
+
+@dataclass
+class MonthStatsDTO:
+    yearmonth: str
+    article_count: int
+    word_mean: int
+    word_median: int
+
+    def to_dict(self) -> Dict:
+        return dict(
+            yearmonth=self.yearmonth,
+            article_count=self.article_count,
+            word_mean=self.word_mean,
+            word_median=self.word_median
+        )
+
+    @classmethod
+    def fromdict(cls, raw: Dict[str, Any]) -> "MonthStatsDTO":
+        yearmonth = raw["yearmonth"]
+        article_count = raw["article_count"]
+        word_mean = raw["word_mean"]
+        word_median = raw["word_median"]
+        if not(
+            isinstance(yearmonth, str)
+            and isinstance(article_count, int)
+            and isinstance(word_mean, int)
+            and isinstance(word_median, int)
+        ):
+            raise BadRequest("Incorrect type on incoming values")
+        return cls(
+            yearmonth=yearmonth,
+            article_count=article_count,
+            word_mean=word_mean,
+            word_median=word_median
+        )

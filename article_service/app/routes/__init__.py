@@ -1,6 +1,7 @@
 from article_service.app import app
 import article_service.app.routes.articles
 import article_service.app.routes.urls
+import article_service.app.routes.analytics_routes
 from flask import make_response, jsonify
 
 
