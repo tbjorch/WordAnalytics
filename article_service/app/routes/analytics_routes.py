@@ -19,3 +19,8 @@ def get_monthstat_data(yearmonth: str) -> flask.Response:
 @app.route('/v1/analytics/monthstats', methods=["POST"])
 def post_monthstat_data() -> flask.Response:
     return controller.post_monthstat_data()
+
+
+@app.route('/v1/analytics/monthstats/<yearmonth>', methods=["PUT"])
+def update_monthstat_data(yearmonth: str) -> flask.Response:
+    return controller.update_monthstat_data(yearmonth)

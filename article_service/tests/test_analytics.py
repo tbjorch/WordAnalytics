@@ -52,7 +52,6 @@ def test_get_monthstat_data_correct() -> None:
         res = c.get('/v1/analytics/monthstats/201912')
         assert res.status_code == 200
         data = res.get_json()
-        print(data)
         assert data["yearmonth"] == "201912"
         assert data["article_count"] == 9800
         assert data["word_mean"] == 120
@@ -217,3 +216,192 @@ def test_post_monthstat_data_already_exists() -> None:
             f"Monthstat record already exist. "
             f"Use PUT request if wanting to update."
         )
+
+
+def test_post_monthstat_data_correct() -> None:
+    with CustomTestClient() as c:
+        res = c.post(
+            f'/v1/analytics/monthstats',
+            data=json.dumps(
+                dict(
+                    yearmonth="201910",
+                    article_count=7000,
+                    word_mean=200,
+                    word_median=80
+                )
+            ),
+            headers={'Content-Type': 'application/json'}
+        )
+        assert res.status_code == 200
+        data = res.get_json()
+        assert data["message"] == "Monthstat record successfully added"
+
+
+def test_put_monthstat_data_correct():
+    with CustomTestClient() as c:
+        monthstat = MonthStats(
+            yearmonth="201910",
+            article_count=9000,
+            word_mean=200,
+            word_median=80
+        )
+        db.session.add(monthstat)
+        db.session.commit()
+        res = c.put(
+            '/v1/analytics/monthstats/201910',
+            data=json.dumps(
+                dict(
+                    article_count=7000,
+                    word_mean=200,
+                    word_median=80
+                )
+            ),
+            headers={'Content-Type': 'application/json'}
+        )
+        assert res.status_code == 200
+        data = res.get_json()
+        assert data["message"] == "Monthstat record successfully updated"
+
+
+def test_put_monthstat_data_non_json():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/201910',
+                data=json.dumps(
+                    dict(
+                        article_count=7000,
+                        word_mean=200,
+                        word_median=80
+                    )
+                )
+            )
+        assert res.status_code == 400
+        data = res.get_json()
+        assert data["description"] == \
+            "Posted data is expected to be in JSON format"
+
+
+def test_put_monthstat_data_nonexisting_record():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/201910',
+                data=json.dumps(
+                    dict(
+                        article_count=7000,
+                        word_mean=200,
+                        word_median=80
+                    )
+                ),
+                headers={'Content-Type': 'application/json'}
+            )
+        assert res.status_code == 404
+        data = res.get_json()
+        assert data["description"] == "No record available for yearmonth value"
+
+
+def test_put_monthstat_data_invalid_yearmonth_month():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/201913',
+                data=json.dumps(
+                    dict(
+                        article_count=7000,
+                        word_mean=200,
+                        word_median=80
+                    )
+                ),
+                headers={'Content-Type': 'application/json'}
+            )
+        assert res.status_code == 400
+        data = res.get_json()
+        assert data["description"] == "Value must be in interval 1-12"
+
+
+def test_put_monthstat_data_invalid_yearmonth_future_year():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/220010',
+                data=json.dumps(
+                    dict(
+                        article_count=7000,
+                        word_mean=200,
+                        word_median=80
+                    )
+                ),
+                headers={'Content-Type': 'application/json'}
+            )
+        assert res.status_code == 400
+        data = res.get_json()
+        assert data["description"] == "Year value cannot be in the future"
+
+
+def test_put_monthstat_data_invalid_yearmonth_before_2000():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/191913',
+                data=json.dumps(
+                    dict(
+                        article_count=7000,
+                        word_mean=200,
+                        word_median=80
+                    )
+                ),
+                headers={'Content-Type': 'application/json'}
+            )
+        assert res.status_code == 400
+        data = res.get_json()
+        assert data["description"] == "Year value cannot be earlier than 2000"
+
+
+def test_put_monthstat_data_invalid_type_1():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/201910',
+                data=json.dumps(
+                    dict(
+                        article_count="7000",
+                        word_mean=200,
+                        word_median=80
+                    )
+                ),
+                headers={'Content-Type': 'application/json'}
+            )
+        assert res.status_code == 400
+        data = res.get_json()
+        assert data["description"] == "Incorrect type on incoming values"
+
+
+def test_put_monthstat_data_invalid_type_2():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/201910',
+                data=json.dumps(
+                    dict(
+                        article_count=7000,
+                        word_mean="200",
+                        word_median=80
+                    )
+                ),
+                headers={'Content-Type': 'application/json'}
+            )
+        assert res.status_code == 400
+        data = res.get_json()
+        assert data["description"] == "Incorrect type on incoming values"
+
+
+def test_put_monthstat_data_invalid_type_3():
+    with CustomTestClient() as c:
+        res = c.put(
+                '/v1/analytics/monthstats/201910',
+                data=json.dumps(
+                    dict(
+                        article_count=7000,
+                        word_mean=200,
+                        word_median="80"
+                    )
+                ),
+                headers={'Content-Type': 'application/json'}
+            )
+        assert res.status_code == 400
+        data = res.get_json()
+        assert data["description"] == "Incorrect type on incoming values"
