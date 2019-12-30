@@ -15,13 +15,19 @@ from article_service.app.models import Url
 from article_service.app.repository import url_repo
 
 
-def create_url(url_dto: CreateUrlDTO) -> None:
-    _assert_valid_yearmonth(url_dto.yearmonth)
-    url_repo.insert(url_dto)
+def create_url(dto: CreateUrlDTO) -> None:
+    _assert_valid_yearmonth(dto.yearmonth)
+    url = Url(
+        id=dto.id,
+        yearmonth=dto.yearmonth,
+        url=dto.url,
+        undesired_url=dto.undesired_url
+    )
+    url_repo.save(url)
 
 
 def get_url_by_id(id: str) -> UrlDTO:
-    url: Url = url_repo.get_by_id(id)
+    url: Url = url_repo.find_by_id(id)
     if url is None:
         raise NotFound("No url exist with the provided id")
     url_dto = UrlDTO(
@@ -37,7 +43,7 @@ def get_url_by_id(id: str) -> UrlDTO:
 
 
 def get_unscraped_urls() -> []:
-    urls: [] = url_repo.get_unscraped()
+    urls: [] = url_repo.find_unscraped()
     if len(urls) == 0:
         raise NotFound("No unscraped Urls in the database")
     return [UrlDTO(
@@ -58,7 +64,7 @@ def set_url_to_scraped(dto: SetUrlScrapedDTO) -> None:
 
 def get_urls_by_yearmonth(yearmonth: str) -> List[UrlDTO]:
     _assert_valid_yearmonth(yearmonth)
-    urls: List[Url] = url_repo.get_by_yearmonth(yearmonth)
+    urls: List[Url] = url_repo.find_by_yearmonth(yearmonth)
     if len(urls) == 0:
         raise NotFound("No urls available at provided yearmonth")
     return [UrlDTO(
@@ -88,7 +94,7 @@ def _assert_valid_yearmonth(yearmonth: int) -> None:
 
 
 def assert_url_exists(id: str) -> Url:
-    url: Url = url_repo.get_by_id(id)
+    url: Url = url_repo.find_by_id(id)
     if url is None:
         raise NotFound("No url exist with the provided id")
     return url

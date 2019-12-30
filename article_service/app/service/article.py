@@ -15,12 +15,16 @@ def create_url(dto: CreateArticleDTO) -> None:
     # Check that corresponding url exists in db, else
     # this scrape is not valid
     assert_url_exists(dto.article_id)
-    article_repo.insert(dto)
+    record = Article(
+        id=dto.article_id,
+        headline=dto.headline,
+        body=dto.body
+    )
+    article_repo.save(record)
 
 
 def get_article_by_id(id: str) -> ArticleDTO:
     article: Article = _assert_article_by_id_exists(id)
-    print(article)
     return ArticleDTO(
         article_id=article.id,
         headline=article.headline,
@@ -30,7 +34,6 @@ def get_article_by_id(id: str) -> ArticleDTO:
 
 
 def get_articles_by_yearmonth(yearmonth: str) -> List[ArticleDTO]:
-    print(yearmonth)
     article_list: List[Article] = (
         _assert_article_by_yearmonth_exists(yearmonth)
         )
@@ -40,7 +43,6 @@ def get_articles_by_yearmonth(yearmonth: str) -> List[ArticleDTO]:
         body=article.body,
         created_at=article.created_at.__str__()
         ) for article in article_list]
-    print(dto_list)
     return dto_list
 
 
@@ -57,7 +59,6 @@ def _assert_article_by_yearmonth_exists(yearmonth: str) -> None:
     article_list: Optional[List[Article]] = (
         article_repo.find_by_yearmonth(yearmonth)
         )
-    print(article_list)
     if len(article_list) == 0:
         raise NotFound("No articles exist for the provided yearmonth")
     return article_list
