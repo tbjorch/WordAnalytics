@@ -95,6 +95,22 @@ class CreateArticleDTO:
 
 
 @dataclass
+class ArticleDTO:
+    article_id: str
+    headline: str
+    body: str
+    created_at: datetime
+
+    def to_dict(self) -> Dict[str, Any]:
+        return dict(
+            article_id=self.article_id,
+            headline=self.headline,
+            body=self.body,
+            created_at=self.created_at
+        )
+
+
+@dataclass
 class MonthStatsDTO:
     yearmonth: str
     article_count: int

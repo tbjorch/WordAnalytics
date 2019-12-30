@@ -30,7 +30,6 @@ def insert_monthstats(dto: MonthStatsDTO) -> None:
         word_mean=dto.word_mean,
         word_median=dto.word_median
     )
-    print(data)
     try:
         db.session.add(data)
         db.session.commit()

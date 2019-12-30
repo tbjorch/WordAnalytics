@@ -1,13 +1,14 @@
-# Standard library 
+# Standard library
 import json
 
 # Internal modules
-from article_service.app import app, db
+from article_service.app import db
 from article_service.app.models import MonthStats
+from article_service.tests import CustomTestClient
 
 
 def test_get_yearmonth_data_invalid_month_value_1() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         res = c.get("/v1/analytics/yearmonthdata/201913")
         assert res.status_code == 400
         data = res.get_json()
@@ -15,7 +16,7 @@ def test_get_yearmonth_data_invalid_month_value_1() -> None:
 
 
 def test_get_yearmonth_data_invalid_month_value_2() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         res = c.get("/v1/analytics/yearmonthdata/201900")
         assert res.status_code == 400
         data = res.get_json()
@@ -23,7 +24,7 @@ def test_get_yearmonth_data_invalid_month_value_2() -> None:
 
 
 def test_get_yearmonth_data_invalid_year_value_1() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         res = c.get("/v1/analytics/yearmonthdata/199910")
         assert res.status_code == 400
         data = res.get_json()
@@ -31,7 +32,7 @@ def test_get_yearmonth_data_invalid_year_value_1() -> None:
 
 
 def test_get_yearmonth_data_invalid_year_value_2() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         res = c.get("/v1/analytics/yearmonthdata/220010")
         assert res.status_code == 400
         data = res.get_json()
@@ -39,16 +40,15 @@ def test_get_yearmonth_data_invalid_year_value_2() -> None:
 
 
 def test_get_monthstat_data_correct() -> None:
-    monthStat = MonthStats(
-        yearmonth="201912",
-        article_count=9800,
-        word_mean=120,
-        word_median=75
-        )
-    db.session.add(monthStat)
-    db.session.commit()
-
-    with app.test_client() as c:
+    with CustomTestClient() as c:
+        monthStat = MonthStats(
+            yearmonth="201912",
+            article_count=9800,
+            word_mean=120,
+            word_median=75
+            )
+        db.session.add(monthStat)
+        db.session.commit()
         res = c.get('/v1/analytics/monthstats/201912')
         assert res.status_code == 200
         data = res.get_json()
@@ -57,12 +57,10 @@ def test_get_monthstat_data_correct() -> None:
         assert data["article_count"] == 9800
         assert data["word_mean"] == 120
         assert data["word_median"] == 75
-    db.session.delete(monthStat)
-    db.session.commit()
 
 
 def test_get_monthstat_data_not_found() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         res = c.get('/v1/analytics/monthstats/201812')
         assert res.status_code == 404
         data = res.get_json()
@@ -71,7 +69,7 @@ def test_get_monthstat_data_not_found() -> None:
 
 
 def test_post_monthstat_data_invalid_yearmonth_future() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         yearmonth = "210012"
         res = c.post(
             f'/v1/analytics/monthstats',
@@ -91,7 +89,7 @@ def test_post_monthstat_data_invalid_yearmonth_future() -> None:
 
 
 def test_post_monthstat_data_invalid_yearmonth_month() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         yearmonth = "201933"
         res = c.post(
             f'/v1/analytics/monthstats',
@@ -111,7 +109,7 @@ def test_post_monthstat_data_invalid_yearmonth_month() -> None:
 
 
 def test_post_monthstat_data_missing_json_headers() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         yearmonth = "201912"
         res = c.post(
             f'/v1/analytics/monthstats',
@@ -126,11 +124,12 @@ def test_post_monthstat_data_missing_json_headers() -> None:
         )
         assert res.status_code == 400
         data = res.get_json()
-        assert data["description"] == "Posted data is expected to be in JSON format"
+        assert data["description"] == \
+            "Posted data is expected to be in JSON format"
 
 
 def test_post_monthstat_data_invalid_type_1() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         yearmonth = "201912"
         res = c.post(
             f'/v1/analytics/monthstats',
@@ -150,7 +149,7 @@ def test_post_monthstat_data_invalid_type_1() -> None:
 
 
 def test_post_monthstat_data_invalid_type_2() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         yearmonth = "201912"
         res = c.post(
             f'/v1/analytics/monthstats',
@@ -170,7 +169,7 @@ def test_post_monthstat_data_invalid_type_2() -> None:
 
 
 def test_post_monthstat_data_invalid_type_3() -> None:
-    with app.test_client() as c:
+    with CustomTestClient() as c:
         yearmonth = "201912"
         res = c.post(
             f'/v1/analytics/monthstats',
@@ -190,15 +189,15 @@ def test_post_monthstat_data_invalid_type_3() -> None:
 
 
 def test_post_monthstat_data_already_exists() -> None:
-    monthstat = MonthStats(
-        yearmonth="201909",
-        article_count=5000,
-        word_mean=140,
-        word_median=78
-        )
-    db.session.add(monthstat)
-    db.session.commit()
-    with app.test_client() as c:
+    with CustomTestClient() as c:
+        monthstat = MonthStats(
+            yearmonth="201909",
+            article_count=5000,
+            word_mean=140,
+            word_median=78
+            )
+        db.session.add(monthstat)
+        db.session.commit()
         yearmonth = "201909"
         res = c.post(
             f'/v1/analytics/monthstats',
@@ -214,6 +213,7 @@ def test_post_monthstat_data_already_exists() -> None:
         )
         assert res.status_code == 403
         data = res.get_json()
-        assert data["description"] == "Monthstat record already exist. Use PUT request if wanting to update."
-    db.session.delete(monthstat)
-    db.session.commit()
+        assert data["description"] == (
+            f"Monthstat record already exist. "
+            f"Use PUT request if wanting to update."
+        )
