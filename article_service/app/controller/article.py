@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 import flask
 
 # Internal modules
-from article_service.utils import (
+from utils import (
     get_required_data_from_request,
     make_json_response
     )

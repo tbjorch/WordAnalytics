@@ -1,6 +1,6 @@
 # Internal modules
 from article_service.app.service import yearmonth
-from article_service.utils import (
+from utils import (
     make_json_response,
     get_required_data_from_request
     )

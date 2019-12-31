@@ -247,13 +247,17 @@ def test_put_monthstat_data_correct():
         )
         db.session.add(monthstat)
         db.session.commit()
+        record = MonthStats.query.filter_by(yearmonth="201910").first()
+        assert record.article_count == 9000
+        assert record.word_mean == 200
+        assert record.word_median == 80
         res = c.put(
             '/v1/analytics/monthstats/201910',
             data=json.dumps(
                 dict(
                     article_count=7000,
-                    word_mean=200,
-                    word_median=80
+                    word_mean=150,
+                    word_median=60
                 )
             ),
             headers={'Content-Type': 'application/json'}
@@ -261,6 +265,10 @@ def test_put_monthstat_data_correct():
         assert res.status_code == 200
         data = res.get_json()
         assert data["message"] == "Monthstat record successfully updated"
+        updated_record = MonthStats.query.filter_by(yearmonth="201910").first()
+        assert updated_record.article_count == 7000
+        assert updated_record.word_mean == 150
+        assert updated_record.word_median == 60
 
 
 def test_put_monthstat_data_non_json():

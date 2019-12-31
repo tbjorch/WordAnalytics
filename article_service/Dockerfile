@@ -9,7 +9,7 @@ RUN apk add --no-cache python3-dev postgresql-dev gcc musl-dev
 RUN python -m venv venv
 
 COPY app app
-COPY utils utils
+COPY ../utils ../utils
 COPY requirements.txt requirements.txt
 COPY run.py shellscripts/run.sh  ./
 RUN chmod +x run.sh

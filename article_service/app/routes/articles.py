@@ -4,7 +4,7 @@ import flask
 # Internal modules
 from article_service.app import app
 from article_service.app.controller import article as controller
-from article_service.utils import ok_response
+from utils import ok_response
 
 
 @app.route('/v1/articles/yearmonth/<yearmonth>', methods=['GET'])
