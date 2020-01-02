@@ -28,7 +28,7 @@ else:
 
 db = SQLAlchemy(app)
 
-import analytics_service.app.routes
+import statistics_service.app.routes
 
 @app.errorhandler(HTTPException)
 def exception_handler(e):
