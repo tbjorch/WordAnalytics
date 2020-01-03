@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 import flask
 
 # Internal modules
-from utils import (
+from article_service.utils import (
     get_required_data_from_request,
     make_json_response
     )
@@ -16,7 +16,7 @@ from article_service.app.service import article as service
 def create_article() -> None:
     request_data = get_required_data_from_request("id", "headline", "body")
     dto: CreateArticleDTO = CreateArticleDTO.fromdict(request_data)
-    service.create_url(dto)
+    service.create_article(dto)
 
 
 def get_article_by_id(id: str) -> flask.Response:

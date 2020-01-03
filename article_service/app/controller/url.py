@@ -6,7 +6,7 @@ import flask
 
 # Internal modules
 from article_service.app.service import url as service
-from utils import (
+from article_service.utils import (
     get_required_data_from_request,
     ok_response,
     make_json_response,

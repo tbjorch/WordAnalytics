@@ -1,9 +1,8 @@
 # Standard library
-from datetime import datetime
 from typing import List
 
 # 3rd party modules
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import NotFound
 
 # Internal modules
 from article_service.app.models.dto import (
@@ -13,10 +12,11 @@ from article_service.app.models.dto import (
 )
 from article_service.app.models import Url
 from article_service.app.repository import url_repo
+from article_service.app.service.utils import assert_valid_yearmonth
 
 
 def create_url(dto: CreateUrlDTO) -> None:
-    _assert_valid_yearmonth(dto.yearmonth)
+    assert_valid_yearmonth(dto.yearmonth)
     url = Url(
         id=dto.id,
         yearmonth=dto.yearmonth,
@@ -63,7 +63,7 @@ def set_url_to_scraped(dto: SetUrlScrapedDTO) -> None:
 
 
 def get_urls_by_yearmonth(yearmonth: str) -> List[UrlDTO]:
-    _assert_valid_yearmonth(yearmonth)
+    assert_valid_yearmonth(yearmonth)
     urls: List[Url] = url_repo.find_by_yearmonth(yearmonth)
     if len(urls) == 0:
         raise NotFound("No urls available at provided yearmonth")
@@ -76,21 +76,6 @@ def get_urls_by_yearmonth(yearmonth: str) -> List[UrlDTO]:
         scraped_at=url.scraped_at,
         created_at=url.created_at
         ).todict() for url in urls]
-
-
-def _assert_valid_yearmonth(yearmonth: int) -> None:
-    if len(yearmonth) != 6:
-        raise BadRequest(
-            "Yearmonth value must be 6 characters length in format YYYYMM"
-            )
-    year: int = int(yearmonth[0:4])
-    month: int = int(yearmonth[4:])
-    if year > datetime.utcnow().year:
-        raise BadRequest("Year value cannot be in the future")
-    if year < 2000:
-        raise BadRequest("Year value cannot be earlier than 2000")
-    if month not in range(1, 13):
-        raise BadRequest("Value must be in interval 1-12")
 
 
 def assert_url_exists(id: str) -> Url:

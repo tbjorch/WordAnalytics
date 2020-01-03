@@ -8,10 +8,11 @@ from werkzeug.exceptions import NotFound
 from article_service.app.models.dto import CreateArticleDTO, ArticleDTO
 from article_service.app.models import Article
 from article_service.app.service.url import assert_url_exists
+from article_service.app.service.utils import assert_valid_yearmonth
 from article_service.app.repository import article_repo
 
 
-def create_url(dto: CreateArticleDTO) -> None:
+def create_article(dto: CreateArticleDTO) -> None:
     # Check that corresponding url exists in db, else
     # this scrape is not valid
     assert_url_exists(dto.article_id)
@@ -34,6 +35,7 @@ def get_article_by_id(id: str) -> ArticleDTO:
 
 
 def get_articles_by_yearmonth(yearmonth: str) -> List[ArticleDTO]:
+    assert_valid_yearmonth(yearmonth)
     article_list: List[Article] = (
         _assert_article_by_yearmonth_exists(yearmonth)
         )
