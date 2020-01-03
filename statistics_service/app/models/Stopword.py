@@ -1,10 +1,12 @@
 # Standard library
 from datetime import datetime
+from dataclasses import dataclass
 
 # Internal modules
 from statistics_service.app import db
 
 
+@dataclass
 class Stopword(db.Model):
     __tablename__ = "stopwords"
     id: int = db.Column(

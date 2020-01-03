@@ -1,5 +1,6 @@
 # Standard library
-import json, os
+import json
+import os
 
 # Third party modules
 from flask import Flask
@@ -28,7 +29,8 @@ else:
 
 db = SQLAlchemy(app)
 
-import statistics_service.app.routes
+import statistics_service.app.routes  # ignore
+
 
 @app.errorhandler(HTTPException)
 def exception_handler(e):

@@ -1,11 +1,26 @@
 # Standard library
+from typing import List
 from collections import Counter
+
+# 3rd party modules
+# from nltk.corpus import stopwords
+# from nltk.stem import SnowballStemmer
 
 # Internal modules
 from statistics_service.app.repository import stopword_repo
+from statistics_service.app.models.dto import ArticleDTO
 
 
-def create_wordlist(text: str):
+def clean_text(article: ArticleDTO) -> ArticleDTO:
+    word_list: List[str] = _create_wordlist(article.headline+" "+article.body)
+    counter = Counter(word_list)
+    counter = _remove_stop_words(counter)
+    # counter = _stem_words(counter)
+    article.add_clean_text(counter)
+    return article
+
+
+def _create_wordlist(text: str):
     """
     Creates a list of words from a text with delimiters,
     numbers and signs removed.
@@ -59,18 +74,29 @@ def create_wordlist(text: str):
     return wordlist
 
 
-def remove_stop_words(c: Counter) -> Counter:
+def _remove_stop_words(c: Counter) -> Counter:
     """
     Cleans list of words from stop words.
 
     Parameters:
-    wordlist (list): list of words (strings)
+    c (Counter): map of words (strings)
 
     Returns:
-    new_list (list) --  with stop words removed
-    len(new_list) (int) -- length of the returned list.
+    c (Counter) --  with stop words removed
     """
-    stopword_list = stopword_repo.get_all_stopwords()
+    stopword_list = [obj.word for obj in stopword_repo.find_all()]
+    # stopword_list = stopwords.words('swedish')
     for word in stopword_list:
         c.__delitem__(word)
+    return c
+
+
+def _stem_words(c: Counter) -> Counter:
+    # stemmer = SnowballStemmer("swedish")
+    word_list = list(c.keys())
+    for word in word_list:
+        # value = c[word]
+        # stemmed_word = stemmer.stem(word)
+        c.__delitem__(word)
+        # c[stemmed_word] = value
     return c
