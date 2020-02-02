@@ -27,6 +27,8 @@ def get_urls_by_yearmonth(yearmonth: str) -> List:
     resp: Response = requests.get(
         f'http://{article_service_uri}:{port}/v1/urls/yearmonth/{yearmonth}'
         )
+    if resp.status_code == 404:
+        return []
     return [_convert_to_url_dto(url) for url in resp.json()]
 
 

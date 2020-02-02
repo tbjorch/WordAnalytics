@@ -86,6 +86,7 @@ def get_news_content(url_dto: UrlDTO) -> None:
     except UnwantedArticleException:
         url_dto.payed_content = True
         with db_lock:
+            # TODO: fix endpoint for setting payed content on articles..
             pass
             # url_repo.update_url(url_dto)
         logging.warning(

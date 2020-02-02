@@ -19,7 +19,7 @@ def start_service():
     logging.info("Starting scraper service")
     while True:
         now = datetime.now()
-        if now.minute % 30 == 0:
+        if now.minute % 1 == 0:
             logging.info("Starting sitemap scraper")
             sitemap_scraper.start(f"{now:%Y%m}")
             unscraped_urls: List[UrlDTO] = rpc.get_unscraped_urls()

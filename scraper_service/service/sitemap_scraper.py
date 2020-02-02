@@ -14,15 +14,18 @@ from service.error import UnwantedArticleException
 
 
 def start(yearmonth: str) -> None:
-    url_list: List[AddUrlDTO] = get_news_urls_from_sitemap(yearmonth)
-    counter: int = 0
-    existing_news: List[UrlDTO] = rpc.get_urls_by_yearmonth(yearmonth)
-    existing_ids: List[str] = [url.id for url in existing_news]
-    for url in url_list:
-        if url.id not in existing_ids:
-            rpc.post_url(url)
-            counter += 1
-    logging.info(f"Inserted {counter} URLs to database")
+    try:
+        url_list: List[AddUrlDTO] = get_news_urls_from_sitemap(yearmonth)
+        counter: int = 0
+        existing_news: List[UrlDTO] = rpc.get_urls_by_yearmonth(yearmonth)
+        existing_ids: List[str] = [url.id for url in existing_news]
+        for url in url_list:
+            if url.id not in existing_ids:
+                rpc.post_url(url)
+                counter += 1
+        logging.info(f"Inserted {counter} URLs to database")
+    except Exception as e:
+        logging.error(f"Error when scraping sitemap {e}")
 
 
 def get_news_urls_from_sitemap(yearmonth: str) -> List[AddUrlDTO]:
@@ -74,5 +77,7 @@ def _check_if_undesired_url(add_url_dto: AddUrlDTO):
 
 
 def _fetch_sitemap_as_soup_object(url: str) -> BeautifulSoup:
-    page: Response = requests.get(url, timeout=3)
-    return BeautifulSoup(page.content, "lxml")
+    res: Response = requests.get(url, timeout=3)
+    if res.status_code == 404:
+        raise Exception(f"Can't find sitemap on url {url}")
+    return BeautifulSoup(res.content, "lxml")
