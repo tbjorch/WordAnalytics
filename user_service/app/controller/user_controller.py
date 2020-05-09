@@ -11,7 +11,7 @@ from user_service.utils import (
     get_required_data_from_request
     )
 from user_service.app.service import user as service
-from user_service.app.models.dto import UserDTO, CreateUserDTO
+from user_service.app.models.dto import UserDTO, CreateUserDTO, CredentialsDTO
 
 
 def get_all_users() -> flask.Response:
@@ -29,7 +29,8 @@ def get_user_by_id(id: int) -> flask.Response:
 
 
 def create_user() -> flask.Response:
-    data: Dict = get_required_data_from_request("name")
+    data: Dict = \
+        get_required_data_from_request("username", "password", "rep_password")
     user: CreateUserDTO = CreateUserDTO.from_dict(data)
     service.create_user(user)
     return make_json_response({"message": "User successfully created"})
@@ -42,3 +43,13 @@ def delete_user(id: int) -> flask.Response:
         raise BadRequest("User id is expected in numerical form")
     service.delete_user(id)
     return make_json_response({"message": "User successfully deleted"})
+
+
+def login() -> flask.Response:
+    data: Dict = get_required_data_from_request("username", "password")
+    credentials: CredentialsDTO = CredentialsDTO.from_dict(data)
+    jwt_token: bytes = service.login(credentials)
+    return make_json_response(
+        {"message": "Successfully logged in"},
+        headers=jwt_token
+    )

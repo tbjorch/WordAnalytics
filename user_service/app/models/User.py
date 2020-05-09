@@ -10,7 +10,8 @@ from user_service.app import db
 class User(db.Model):
     __tablename__ = "Users"
     id: int = db.Column(db.Integer, primary_key=True)
-    name: str = db.Column(db.String(50), nullable=False)
+    username: str = db.Column(db.String(50), nullable=False, unique=True)
+    password_hash: str = db.Column(db.String(100), nullable=False)
     created_at: datetime = db.Column(
         db.DateTime,
         nullable=False,

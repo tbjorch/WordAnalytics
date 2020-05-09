@@ -1,6 +1,6 @@
 # Standard library
 from typing import List
-from statistics import mean, median
+from statistics import mean, median, stdev
 from collections import Counter
 
 # Internal modules

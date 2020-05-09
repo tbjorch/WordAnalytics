@@ -10,14 +10,14 @@ from werkzeug.exceptions import BadRequest
 @dataclass
 class UserDTO:
     id: int
-    name: str
+    username: str
     created_at: datetime
 
     def to_dict(self) -> Dict:
         return(
             dict(
                 id=self.id,
-                name=self.name,
+                username=self.username,
                 created_at=self.created_at
             )
         )
@@ -25,13 +25,43 @@ class UserDTO:
 
 @dataclass
 class CreateUserDTO:
-    name: str
+    username: str
+    password: str
+    rep_password: str
 
     @classmethod
     def from_dict(cls, raw: Dict[str, Any]) -> "CreateUserDTO":
-        name = raw["name"]
-        if not(isinstance(name, str)):
+        username = raw["username"]
+        password = raw["password"]
+        rep_password = raw["rep_password"]
+        if not(
+            isinstance(username, str) and
+            isinstance(password, str) and
+            isinstance(rep_password, str)
+        ):
             raise BadRequest("Incorrect type on incoming values")
         return cls(
-            name=name
+            username=username,
+            password=password,
+            rep_password=rep_password
+        )
+
+
+@dataclass
+class CredentialsDTO:
+    username: str
+    password: str
+
+    @classmethod
+    def from_dict(cls, raw: Dict[str, Any]) -> "CredentialsDTO":
+        username = raw["username"]
+        password = raw["password"]
+        if not(
+            isinstance(username, str) and
+            isinstance(password, str)
+        ):
+            raise BadRequest("Incorrect type on incoming values")
+        return cls(
+            username=username,
+            password=password
         )

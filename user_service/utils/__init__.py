@@ -32,7 +32,9 @@ def ok_response() -> flask.Response:
     return make_response(jsonify(message="ok"), 200)
 
 
-def make_json_response(return_data: Dict) -> flask.Response:
+def make_json_response(return_data: Dict, headers=None) -> flask.Response:
     response = make_response(jsonify(return_data), 200)
+    if headers:
+        response.headers['Authorization'] = f"Bearer {headers}"
     response.content_type = "application/json"
     return response
